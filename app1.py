@@ -4,71 +4,72 @@ import numpy as np
 import pytesseract
 from PIL import Image
 
-
+# Estilo visual con fondo colorido y emojis
 st.markdown("""
     <style>
         body {
-            background-color: #1e2a47;  /* Fondo azul oscuro */
-            color: #ffffff;  /* Texto en color blanco */
+            background-color: #002b36;  /* Fondo oscuro con un toque moderno */
+            color: #ffffff;  /* Texto blanco */
         }
         .stTitle {
-            color: #f4a261;  /* Título en color cálido */
+            color: #ff69b4;  /* Título con color rosado */
+            font-size: 2em;
         }
         .stHeader {
-            color: #ffb703;  /* Cabecera en tono dorado */
+            color: #ff6347;  /* Cabecera en color tomate */
         }
         .stTextInput>div>div>input, .stTextArea>div>div>textarea {
-            background-color: #4c6a92;  /* Fondo de los campos de texto */
-            color: white;  /* Texto en los campos de texto en blanco */
+            background-color: #4caf50;  /* Fondo verde para los campos de texto */
+            color: white;  /* Texto en blanco */
             border-radius: 10px;
         }
         .stButton>button {
-            background-color: #ffb703;  /* Color amarillo en los botones */
-            color: #1e2a47;  /* Texto oscuro en el botón */
+            background-color: #ffa500;  /* Botones en color naranja */
+            color: #002b36;  /* Texto oscuro en el botón */
             border-radius: 10px;
+            font-size: 1em;
+        }
+        .stRadio>div>label {
+            color: #ffeb3b;  /* Color amarillo para las opciones del radio */
         }
     </style>
 """, unsafe_allow_html=True)
 
+# Título principal con emojis
+st.title(" Reconocimiento de Texto en Imágenes 📸")
 
-st.title("Reconocimiento óptico de Caracteres")
-
-
+# Instrucciones en el sidebar con emojis
 with st.sidebar:
-    st.subheader("Ajustes de la imagen")
-    filtro = st.radio("Aplicar filtro", ('Con Filtro', 'Sin Filtro'))
+    st.subheader("✨ Ajustes para tu foto")
+    filtro = st.radio("¿Quieres aplicar un filtro?", ('🖤 Con Filtro', '💛 Sin Filtro'))
 
-
-img_file_buffer = st.camera_input("Toma una Foto de una Medusa")
+# Captura de imagen desde la cámara
+img_file_buffer = st.camera_input("📸 Toma una Foto para Analizar")
 
 if img_file_buffer is not None:
-    
+    # Procesamiento de la imagen
     bytes_data = img_file_buffer.getvalue()
     cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
     
-    
-    if filtro == 'Con Filtro':
-        cv2_img = cv2.bitwise_not(cv2_img) 
+    # Aplicar filtro si el usuario lo selecciona
+    if filtro == '🖤 Con Filtro':
+        cv2_img = cv2.bitwise_not(cv2_img)  # Filtro invertido (blanco/negro)
     else:
-        cv2_img = cv2_img  
+        cv2_img = cv2_img  # Sin filtro
     
-    
+    # Convertir la imagen a RGB para mostrarla correctamente en Streamlit
     img_rgb = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
     
-    
-    st.image(img_rgb, caption="Imagen Procesada", use_column_width=True)
+    # Mostrar la imagen procesada
+    st.image(img_rgb, caption="📷 Imagen Procesada", use_column_width=True)
 
-    
+    # Extraer texto con pytesseract
     text = pytesseract.image_to_string(img_rgb)
     
-    
-    if text.strip():  
-        st.subheader("Texto Reconocido:")
+    # Mostrar el texto extraído
+    if text.strip():  # Si hay texto extraído
+        st.subheader(" Texto Reconocido:")
         st.write(text)
     else:
-        st.warning("No se pudo reconocer texto en la imagen. Intenta con otra imagen.")
-
-
-    
-
+        st.warning(" No se pudo reconocer texto en la imagen. Intenta con otra imagen.")
 
